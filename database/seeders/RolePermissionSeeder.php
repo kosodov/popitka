@@ -20,12 +20,17 @@ class RolePermissionSeeder extends Seeder
         $viewReports = Permission::create(['name' => 'View Reports', 'description' => 'Can view reports', 'code' => 'view_reports', 'created_by' => 1]);
         $viewContent = Permission::create(['name' => 'View Content', 'description' => 'Can view content', 'code' => 'view_content', 'created_by' => 1]);
 
-        // Присвоение разрешений ролям
-        $adminRole->permissions()->attach($manageUsers);
-        $adminRole->permissions()->attach($viewReports);
+        // Новые разрешения для доступа к историям
+        $getStoryPermission = Permission::create(['name' => 'Get Story Permission', 'description' => 'Can get story permission', 'code' => 'get-story-permission', 'created_by' => 1]);
+        $getStoryRole = Permission::create(['name' => 'Get Story Role', 'description' => 'Can get story role', 'code' => 'get-story-role', 'created_by' => 1]);
+        $getStoryUser = Permission::create(['name' => 'Get Story User', 'description' => 'Can get story user', 'code' => 'get-story-user', 'created_by' => 1]);
 
+        // Присвоение разрешений админу
+        $adminRole->permissions()->attach([$manageUsers->id, $viewReports->id, $getStoryPermission->id, $getStoryRole->id, $getStoryUser->id]);
+
+        // Присвоение разрешений другим ролям (в примере присваивается только разрешение просмотра отчетов другим ролям)
         $userRole->permissions()->attach($viewReports);
-
         $guestRole->permissions()->attach($viewContent);
     }
 }
+

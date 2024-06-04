@@ -4,15 +4,30 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Role;
+use App\Models\ChangeLog;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\DTOs\UserDTO;
 use App\Http\DTOs\UserAndRoleDTO;
 use App\Http\DTOs\UserCollectionDTO;
 use App\Http\DTOs\RoleDTO;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use DB;
 
 class UserRoleController extends Controller
 {
+    protected function logChange($entityType, $entityId, $before, $after)
+    {
+        ChangeLog::create([
+            'entity_type' => $entityType,
+            'entity_id' => $entityId,
+            'before' => json_encode($before),
+            'after' => json_encode($after),
+            'created_by' => Auth::user()->id,
+        ]);
+    }
+
     public function index(): JsonResponse
     {
         $users = User::with('roles')->get();
@@ -43,35 +58,83 @@ class UserRoleController extends Controller
 
     public function assignRole(Request $request, $id): JsonResponse
     {
-        $user = User::findOrFail($id);
-        $role = Role::findOrFail($request->role_id);
+        DB::beginTransaction();
+        try {
+            $user = User::findOrFail($id);
+            $role = Role::findOrFail($request->role_id);
 
-        $user->roles()->attach($role);
+            $before = $user->roles->toArray();
+            $user->roles()->attach($role);
+            $after = $user->roles()->get()->toArray();
 
-        return response()->json(['message' => 'Role assigned successfully.'], 200);
+            $this->logChange('UserRole', $user->id, $before, $after);
+
+            DB::commit();
+            return response()->json(['message' => 'Role assigned successfully.'], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error during role assignment: '.$e->getMessage());
+            return response()->json(['error' => 'Role assignment failed'], 500);
+        }
     }
 
     public function removeRole($id, $roleId): JsonResponse
     {
-        $user = User::findOrFail($id);
-        $user->roles()->detach($roleId);
+        DB::beginTransaction();
+        try {
+            $user = User::findOrFail($id);
+            $before = $user->roles->toArray();
+            $user->roles()->detach($roleId);
+            $after = $user->roles()->get()->toArray();
 
-        return response()->json(['message' => 'Role removed successfully.'], 200);
+            $this->logChange('UserRole', $user->id, $before, $after);
+
+            DB::commit();
+            return response()->json(['message' => 'Role removed successfully.'], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error during role removal: '.$e->getMessage());
+            return response()->json(['error' => 'Role removal failed'], 500);
+        }
     }
 
     public function softRemoveRole($id, $roleId): JsonResponse
     {
-        $user = User::findOrFail($id);
-        $user->roles()->updateExistingPivot($roleId, ['deleted_at' => now()]);
+        DB::beginTransaction();
+        try {
+            $user = User::findOrFail($id);
+            $before = $user->roles->toArray();
+            $user->roles()->updateExistingPivot($roleId, ['deleted_at' => now()]);
+            $after = $user->roles()->get()->toArray();
 
-        return response()->json(['message' => 'Role soft removed successfully.'], 200);
+            $this->logChange('UserRole', $user->id, $before, $after);
+
+            DB::commit();
+            return response()->json(['message' => 'Role soft removed successfully.'], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error during soft role removal: '.$e->getMessage());
+            return response()->json(['error' => 'Soft role removal failed'], 500);
+        }
     }
 
     public function restoreRole($id, $roleId): JsonResponse
     {
-        $user = User::findOrFail($id);
-        $user->roles()->updateExistingPivot($roleId, ['deleted_at' => null]);
+        DB::beginTransaction();
+        try {
+            $user = User::findOrFail($id);
+            $before = $user->roles->toArray();
+            $user->roles()->updateExistingPivot($roleId, ['deleted_at' => null]);
+            $after = $user->roles()->get()->toArray();
 
-        return response()->json(['message' => 'Role restored successfully.'], 200);
+            $this->logChange('UserRole', $user->id, $before, $after);
+
+            DB::commit();
+            return response()->json(['message' => 'Role restored successfully.'], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error during role restoration: '.$e->getMessage());
+            return response()->json(['error' => 'Role restoration failed'], 500);
+        }
     }
 }
