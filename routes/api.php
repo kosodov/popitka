@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserRoleController;
-
+use App\Http\Controllers\ChangeLogController;
 
 
 Route::apiResource('permissions', PermissionController::class);
@@ -55,6 +55,18 @@ Route::middleware(['auth:sanctum'])->group(function () {
 });
 
 
+Route::middleware(['auth:sanctum', 'permission:get-story-user'])->group(function () {
+    Route::get('/ref/user/{id}/story', [ChangeLogController::class, 'showUserChangeLogs']);
+});
+
+Route::middleware(['auth:sanctum', 'permission:get-story-permission'])->group(function () {
+    Route::get('/ref/policy/permission/{id}/story', [ChangeLogController::class, 'showPermissionChangeLogs']);
+    Route::post('/ref/change-log/{id}/revert', [ChangeLogController::class, 'revert']);
+});
+
+Route::middleware(['auth:sanctum', 'permission:get-story-role'])->group(function () {
+    Route::get('/ref/policy/role/{id}/story', [ChangeLogController::class, 'showRoleChangeLogs']);
+});
 
 
 use App\Http\Controllers\AuthController;
