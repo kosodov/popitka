@@ -41,6 +41,7 @@ class GitWebhookController extends Controller
                 'git checkout main',
                 'git fetch origin main',
                 'git reset --hard origin/main',
+                'git clean -fd',
                 'git pull origin main'
             ];
 
