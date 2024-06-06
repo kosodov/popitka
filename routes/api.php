@@ -80,6 +80,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 
 
+use App\Http\Controllers\GitWebhookController;
+
+Route::post('/hooks/git', [GitWebhookController::class, 'handle']);
+
+
 use App\Http\Controllers\AuthController;
 
 Route::post('auth/login', [AuthController::class, 'login']);
