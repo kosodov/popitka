@@ -69,6 +69,22 @@ Route::middleware(['auth:sanctum', 'permission:get-story-role'])->group(function
 });
 
 
+
+
+use App\Http\Controllers\TwoFactorAuthController;
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('/two-factor/request', [TwoFactorAuthController::class, 'requestCode']);
+    Route::post('/two-factor/verify', [TwoFactorAuthController::class, 'verifyCode']);
+});
+
+
+
+use App\Http\Controllers\GitWebhookController;
+
+Route::post('/hooks/git', [GitWebhookController::class, 'handle']);
+
+
 use App\Http\Controllers\AuthController;
 
 Route::post('auth/login', [AuthController::class, 'login']);
