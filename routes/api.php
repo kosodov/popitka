@@ -68,7 +68,7 @@ Route::middleware(['auth:sanctum', 'permission:get-story-role'])->group(function
     Route::get('/ref/policy/role/{id}/story', [ChangeLogController::class, 'showRoleChangeLogs']);
 });
 
-
+//nasral
 
 
 use App\Http\Controllers\TwoFactorAuthController;
