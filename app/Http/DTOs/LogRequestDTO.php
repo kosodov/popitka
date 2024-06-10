@@ -39,3 +39,5 @@ class LogRequestDTO
         $this->created_at = $logRequest->created_at;
     }
 }
+
+

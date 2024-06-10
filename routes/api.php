@@ -85,6 +85,16 @@ use App\Http\Controllers\GitWebhookController;
 Route::post('/hooks/git', [GitWebhookController::class, 'handleWebhook']);
 
 
+use App\Http\Controllers\LogRequestController;
+
+Route::middleware(['auth:api', 'admin'])->group(function () {
+    Route::get('ref/log/request', [LogRequestController::class, 'index']);
+    Route::get('ref/log/request/{id}', [LogRequestController::class, 'show']);
+    Route::delete('ref/log/request/{id}', [LogRequestController::class, 'destroy']);
+});
+
+
+
 use App\Http\Controllers\AuthController;
 
 Route::post('auth/login', [AuthController::class, 'login']);

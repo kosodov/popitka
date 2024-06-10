@@ -4,11 +4,11 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateLogsRequestsTable extends Migration
+class CreateLogRequestsTable extends Migration
 {
     public function up()
     {
-        Schema::create('logs_requests', function (Blueprint $table) {
+        Schema::create('log_requests', function (Blueprint $table) {
             $table->id();
             $table->string('full_url');
             $table->string('http_method');
