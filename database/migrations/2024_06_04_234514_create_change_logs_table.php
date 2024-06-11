@@ -13,9 +13,9 @@ class CreateChangeLogsTable extends Migration
             $table->string('entity_type');
             $table->unsignedBigInteger('entity_id');
             $table->json('before')->nullable();
-            $table->json('after');
+            $table->json('after')->nullable();
             $table->timestamp('created_at')->useCurrent();
-            $table->unsignedBigInteger('created_by');
+            $table->unsignedBigInteger('created_by')->nullable();
             $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
         });
     }

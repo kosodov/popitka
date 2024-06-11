@@ -2,22 +2,22 @@
 
 namespace App\Providers;
 
+use App\Models\User;
+use App\Models\Role;
+use App\Models\Permission;
+use App\Observers\ChangeLogObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
-    public function register(): void
+    public function boot()
     {
-        //
+        User::observe(ChangeLogObserver::class);
+        Role::observe(ChangeLogObserver::class);
+        Permission::observe(ChangeLogObserver::class);
     }
 
-    /**
-     * Bootstrap any application services.
-     */
-    public function boot(): void
+    public function register()
     {
         //
     }

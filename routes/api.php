@@ -54,7 +54,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/ref/policy/permission/{id}/restore', [PermissionController::class, 'restore']);
 });
 
-
+//Lab4
 Route::middleware(['auth:sanctum', 'permission:get-story-user'])->group(function () {
     Route::get('/ref/user/{id}/story', [ChangeLogController::class, 'showUserChangeLogs']);
 });
