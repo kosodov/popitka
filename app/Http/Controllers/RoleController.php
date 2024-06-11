@@ -66,7 +66,6 @@ class RoleController extends Controller
         $dto = $request->toDTO();
         $role = Role::findOrFail($id);
         $before = $role->toArray();
-
         $role->update([
             'name' => $dto->name,
             'description' => $dto->description,

@@ -39,15 +39,14 @@ class ChangeLogController extends Controller
             return response()->json(['error' => 'Model not found'], 404);
         }
 
-        $entity = $modelClass::withTrashed($log->entity_id);
-        
+        $entity = $modelClass::withTrashed()->findOrFail($log->entity_id);
+
         $before = $log->before;
 
         if (is_array($before) && !empty($before)) {
-           
             $updateData = $before;
             if (is_array($updateData)) {
-                $filteredData = array_diff_key($updateData, array_flip(['id', 'created_at', 'updated_at', 'deleted_at','deleted_by', 'pivot']));
+                $filteredData = array_diff_key($updateData, array_flip(['id', 'created_at', 'updated_at', 'deleted_at', 'deleted_by', 'pivot']));
 
                 $debug_info = [
                     'entity_before_update' => $entity->toArray(),
@@ -55,6 +54,8 @@ class ChangeLogController extends Controller
                 ];
 
                 $update_result = $entity->update($filteredData);
+
+                $entity->refresh();
 
                 $debug_info['entity_after_update'] = $entity->toArray();
                 $debug_info['update_result'] = $update_result;
@@ -73,4 +74,5 @@ class ChangeLogController extends Controller
             ], 400);
         }
     }
+
 }
