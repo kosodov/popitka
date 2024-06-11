@@ -20,7 +20,6 @@ class AuthController extends Controller
         return response()->json(['user' => $user], 200);
     }
 
-    // Метод для выхода пользователя из системы
     public function logout(Request $request): JsonResponse
     {
         $user = $request->user();
@@ -28,7 +27,6 @@ class AuthController extends Controller
         return response()->json(['message' => 'Logged out successfully'], 200);
     }
 
-    // Метод для получения списка токенов пользователя
     public function tokens(Request $request): JsonResponse
     {
         $user = $request->user();
@@ -36,7 +34,6 @@ class AuthController extends Controller
         return response()->json(['tokens' => $tokens], 200);
     }
 
-    // Метод для выхода пользователя из всех сеансов
     public function logoutAll(Request $request): JsonResponse
     {
         $user = $request->user();

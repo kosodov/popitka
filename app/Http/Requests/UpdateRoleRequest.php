@@ -9,7 +9,7 @@ class UpdateRoleRequest extends FormRequest
 {
     public function authorize()
     {
-        return true; // Измените это на проверку авторизации, если необходимо
+        return true;
     }
 
     public function rules()

@@ -15,28 +15,23 @@ class GitWebhookController extends Controller
     {
         $providedSecret = $request->input('secret_key');
 
-        // Проверка секретного ключа
         if ($providedSecret !== env('GIT_WEBHOOK_SECRET')) {
             return response()->json(['message' => 'Invalid secret key'], 403);
         }
 
-        // Проверка блокировки
         if (Storage::disk('local')->exists('git-webhook.lock')) {
             return response()->json(['message' => 'Update already in progress'], 423);
         }
 
-        // Создание файла блокировки
         Storage::disk('local')->put('git-webhook.lock', 'locked');
 
         try {
-            // Логирование запроса
             WebhookLog::create([
                 'date' => now(),
                 'ip' => $request->ip(),
                 'message' => 'Webhook received'
             ]);
 
-            // Выполнение команд Git с записью ошибок
             $commands = [
                 'git checkout main',
                 'git fetch origin main',
@@ -53,7 +48,6 @@ class GitWebhookController extends Controller
                     throw new \Exception('Git command failed: ' . implode("\n", $output));
                 }
 
-                // Логирование результата команды
                 WebhookLog::create([
                     'date' => now(),
                     'ip' => $request->ip(),
@@ -61,15 +55,12 @@ class GitWebhookController extends Controller
                 ]);
             }
 
-            // Удаление файла блокировки
             Storage::disk('local')->delete('git-webhook.lock');
 
             return response()->json(['message' => 'Update completed successfully']);
         } catch (\Exception $e) {
-            // Удаление файла блокировки при ошибке
             Storage::disk('local')->delete('git-webhook.lock');
 
-            // Логирование ошибки
             WebhookLog::create([
                 'date' => now(),
                 'ip' => $request->ip(),

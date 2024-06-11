@@ -50,7 +50,6 @@ class RoleController extends Controller
             'created_by' => Auth::user()->id,
         ]);
 
-        // Логируем создание роли
         ChangeLog::create([
             'entity_type' => 'Role',
             'entity_id' => $role->id,
@@ -75,7 +74,6 @@ class RoleController extends Controller
             'created_by' => Auth::user()->id,
         ]);
 
-        // Логируем обновление роли
         ChangeLog::create([
             'entity_type' => 'Role',
             'entity_id' => $role->id,
@@ -94,7 +92,6 @@ class RoleController extends Controller
 
         $role->delete();
 
-        // Логируем удаление роли
         ChangeLog::create([
             'entity_type' => 'Role',
             'entity_id' => $role->id,
@@ -113,7 +110,6 @@ class RoleController extends Controller
 
         $role->delete(); // assuming soft delete is enabled
 
-        // Логируем мягкое удаление роли
         ChangeLog::create([
             'entity_type' => 'Role',
             'entity_id' => $role->id,
@@ -132,7 +128,6 @@ class RoleController extends Controller
 
         $role->restore();
 
-        // Логируем восстановление роли
         ChangeLog::create([
             'entity_type' => 'Role',
             'entity_id' => $role->id,

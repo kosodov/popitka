@@ -34,7 +34,6 @@ class PermissionController extends Controller
     {
         $permission = Permission::create($request->all());
 
-        // Логируем создание пермишена
         ChangeLog::create([
             'entity_type' => 'Permission',
             'entity_id' => $permission->id,
@@ -55,7 +54,6 @@ class PermissionController extends Controller
 
         $permission->update($request->all());
 
-        // Логируем обновление пермишена
         ChangeLog::create([
             'entity_type' => 'Permission',
             'entity_id' => $permission->id,
@@ -76,7 +74,6 @@ class PermissionController extends Controller
 
         $permission->delete();
 
-        // Логируем удаление пермишена
         ChangeLog::create([
             'entity_type' => 'Permission',
             'entity_id' => $permission->id,
@@ -95,7 +92,6 @@ class PermissionController extends Controller
 
         $permission->delete(); // assuming soft delete is enabled
 
-        // Логируем мягкое удаление пермишена
         ChangeLog::create([
             'entity_type' => 'Permission',
             'entity_id' => $permission->id,
@@ -114,7 +110,6 @@ class PermissionController extends Controller
 
         $permission->restore();
 
-        // Логируем восстановление пермишена
         ChangeLog::create([
             'entity_type' => 'Permission',
             'entity_id' => $permission->id,

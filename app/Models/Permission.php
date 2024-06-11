@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Auth; // Для доступа к текущему пользователю
+use Illuminate\Support\Facades\Auth;
 
 class Permission extends Model
 {
@@ -14,7 +14,7 @@ class Permission extends Model
         'name',
         'description',
         'code',
-        'created_by', // Добавляем поле created_by в массив fillable
+        'created_by',
         'deleted_by'
     ];
 
@@ -24,11 +24,8 @@ class Permission extends Model
 
         // Глобальное событие сохранения модели
         static::saving(function ($permission) {
-            // Если поле created_by не заполнено, установим его
             if (!$permission->created_by) {
-                // Получаем ID текущего аутентифицированного пользователя (если он есть)
                 $userId = Auth::id();
-                // Устанавливаем значение created_by на ID текущего пользователя
                 $permission->created_by = $userId;
             }
         });
