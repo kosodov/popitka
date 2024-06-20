@@ -22,6 +22,22 @@ class InfoController extends Controller
     public function databaseInfo()
     {
         $databaseName = DB::connection()->getDatabaseName();
-        return response()->json(['database' => $databaseName]);
+        $version = DB::select("SELECT VERSION() AS version");
+        $version = $version[0]->version;
+
+        $connection = DB::connection()->getConfig();
+
+        return response()->json([
+            'database' => $databaseName,
+            'version' => $version,
+            'connection' => [
+                'driver' => $connection['driver'],
+                'host' => $connection['host'],
+                'port' => $connection['port'],
+                'database' => $connection['database'],
+                'username' => $connection['username'],
+            ],
+        ]);
     }
+
 }
